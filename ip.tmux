@@ -35,25 +35,18 @@ test_show_ip_addresses(){
 
 update_tmux_option() {
         local option=$1
-        #local option_value='ahoj #{ip}'
         local option_value="$(tmux show-option -gqv "$option")"
         local sum
         for iface in "${!ifaces[@]}"; do
-                echo "PRED:$option_value"
                 option_value=${option_value//\#\{ip_${iface}_desc\}/$iface: ${ifaces[$iface]}}
                 option_value=${option_value//\#\{ip_${iface}\}/${ifaces[$iface]}}
-                echo "PO:$option_value"
                 if [ -n "$sum" ]; then 
                         sum="${sum}, " 
                 fi
                 sum="${sum}${iface}(${ifaces[$iface]})"
-                echo "NEW:$sum"
         done
-        echo "PRED2:$option_value"
         option_value=${option_value//\#\{ip\}/$sum}
-        echo "PO2:$option_value"
-        echo $option_value
-        #tmux set-option -gq "$option" "$option_value"
+        tmux set-option -gq "$option" "$option_value"
 }
 
 main() {
